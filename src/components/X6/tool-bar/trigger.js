@@ -138,3 +138,19 @@ export function renewConnector(graph, type, that) {
     that.$message.warning('请先选中连接线')
   }
 }
+
+// 锁定功能，设置选中的节点的工具消失
+export function setWidgetToolsHidden(flag = false) {
+  const transformNodeList = document.querySelectorAll('.x6-widget-transform')
+  const selectBoxNodeList = document.querySelectorAll('.x6-widget-selection-box-node')
+  const selectBoxList = document.querySelectorAll('.x6-widget-selection-box')
+  transformNodeList.forEach(el => {
+    el.style.visibility = flag ? 'hidden' : 'visible'
+  })
+  selectBoxNodeList.forEach(el => {
+    el.style.visibility = flag ? 'hidden' : 'visible'
+  })
+  selectBoxList.forEach(el => {
+    el.style.visibility = flag ? 'hidden' : 'visible'
+  })
+}

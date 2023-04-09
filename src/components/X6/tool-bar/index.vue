@@ -84,17 +84,33 @@
     </transition>
 
     <view-bar class="icon" />
-    <span
-      v-show="!interlinkage"
-      class="icon"
-      @mouseenter="handleTipsHover1"
-      @mouseleave="handleTipsLeave1">
-      <svg-icon
-        :class="{ light: showType }"
-        style="width:16px;height:16px;"
-        icon-class="flex-node"
-        title="提示" />
-    </span>
+    <!-- 连接类型 -->
+    <el-popover
+      v-model="showType"
+      popper-class="view"
+      placement="bottom"
+      width="150"
+      trigger="hover">
+      <span slot="reference">
+        <svg-icon
+          :class="{ light: showType }"
+          style="width:16px;height:16px;"
+          icon-class="flex-node"
+          title="提示" />
+      </span>
+      <div class="po-menu">
+        <div
+          v-for="(content, index) in typeContent"
+          :key="index"
+          class="box">
+          <div class="value" @click="handleTrigger('type-edge',content.value)">
+            {{ content.label }}
+          </div>
+        </div>
+        <div class="arrow"></div>
+      </div>
+    </el-popover>
+    <align-bar class="icon" />
     
     <transition name="fade">
       <!-- 文案提示容器 -->
@@ -117,25 +133,6 @@
         <div class="arrow"></div>
       </div>
     </transition>
-    
-    <transition name="fade">
-      <!-- 连接类型 -->
-      <div
-        v-show="showType"
-        class="tips-container type-container"
-        @mouseenter="handleTipsHover1"
-        @mouseleave="handleTipsLeave1">
-        <div
-          v-for="(content, index) in typeContent"
-          :key="index"
-          class="tips-row">
-          <div class="value" @click="handleTrigger('type-edge',content.value)">
-            {{ content.label }}
-          </div>
-        </div>
-        <div class="arrow"></div>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -149,12 +146,14 @@ import searchNode from './search/index'
 import ViewBar from './view'
 import FileBar from './file/export/index.vue'
 import EditBar from './edit/index.vue'
+import AlignBar from './align/index.vue'
 
 export default {
   components: {
     ViewBar,
     FileBar,
-    EditBar
+    EditBar,
+    AlignBar
   },
   directives: {
     drag(el) {
@@ -204,7 +203,6 @@ export default {
       restaurants: [],
       state: '',
       freeze: false,
-      interlinkage: false,
       showType: false,
       tools: Tools,
       // 引导文案
@@ -262,16 +260,6 @@ export default {
     },
     querySearch(queryString, cb) {
       searchNode.querySearch(queryString, cb)
-    },
-    handleTipsHover1() {
-      this.showType = true
-      clearTimeout(this.timeId)
-    },
-    handleTipsLeave1(delay = 500) {
-      this.timeId = setTimeout(() => {
-        this.showType = false
-        this.timeId = null
-      }, delay)
     },
     handleTrigger(name, type) {
       const graph = window.graph
@@ -442,19 +430,8 @@ export default {
       }
     }
   }
-  .type-container {
-    width: 120px;
-    cursor: pointer;
-    right: 10px;
-    .value {
-      padding: 3px 0;
-    }
-    .tips-row {
-      justify-content: center;
-    }
-    .value:hover{
-      color: #67c23a;
-    }
+  .popover-row {
+    height: 32px;
   }
   .fade-enter-active,
   .fade-leave-active {
@@ -462,6 +439,33 @@ export default {
   }
   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
+  }
+}
+.po-menu{
+  background: #fff;
+  border: #e9edf2;
+  box-shadow: 0 4px 10px 0 rgb(0 0 0 / 10%);
+  border-radius: 4px;
+  padding-top: 4px;
+  padding-bottom: 2px;
+  color: #212930;
+  font-size: 14px;
+  margin: -12px;
+  .box{
+    height: 32px;
+    line-height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding-left: 36px;
+    padding-right: 8px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    &:hover{
+      background-color: #f3f5f9;
+    }
   }
 }
 </style>

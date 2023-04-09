@@ -111,3 +111,43 @@ export const typeContent = [
     value: 'jumpover'
   }
 ]
+export const typeAlign = [
+  {
+    label: '左对齐',
+    value: 'left'
+  },
+  {
+    label: '居中对齐',
+    value: 'mid'
+  },
+  {
+    label: '右对齐',
+    value: 'right'
+  }
+]
+
+export const typeWidthAndHeight = [
+  {
+    label: '宽度匹配',
+    value: 'width'
+  },
+  {
+    label: '高度匹配',
+    value: 'height'
+  },
+  {
+    label: '宽高匹配',
+    value: 'widthAndHeight'
+  }
+]
+
+export const typeLock = [
+  {
+    label: '锁定',
+    value: 'lock'
+  },
+  {
+    label: '解锁',
+    value: 'unLock'
+  }
+]

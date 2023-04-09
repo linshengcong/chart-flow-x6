@@ -1,8 +1,8 @@
 /**
  * Author: lixiaoyi 2212884878@qq.com
  * Date: 2023-03-27 17:47:01
- * LastEditors: zengkui527996131@qq.com hw2881HWX
- * LastEditTime: 2023-03-29 16:25:55
+ * LastEditors: lixiaoyi xiaogou2019@outlook.com
+ * LastEditTime: 2023-04-06 15:14:30
  */
 const { Vector } = window.X6
 // 添加边
@@ -173,6 +173,7 @@ export const removeShapeEdge = (graph) => {
 }
 export const setAnimate = (id, graph) => {
   const { Vector } = window.X6
+  console.log(Vector)
   removeShapeEdge(graph)
   graph.getEdges().filter(item => item.source.cell === id).forEach(item => {
     const view = graph.findViewByCell(item)

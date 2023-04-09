@@ -1,6 +1,5 @@
 const { Graph, Addon, Shape } = window.X6
 import jsonData from './data'
-import jsonData2 from './data2'
 import trigger from '../tool-bar/trigger'
 import './shape'
 export const initX6 = (_this) => {
@@ -12,6 +11,15 @@ export const initX6 = (_this) => {
     // https://x6.antv.vision/zh/docs/api/graph/graph#autoresize
     autoResize: true,
     scroller: true,
+    // 节点
+    interacting: (view) => {
+      const cell = view && view.cell
+      const disableMove = cell && cell.store.data.disableMove
+      if (cell && disableMove) {
+        return { nodeMovable: false }
+      }
+      return true
+    },
     // 网格
     grid: {
       size: 10, // 网格大小 10px
@@ -46,7 +54,7 @@ export const initX6 = (_this) => {
     // 画布是否可以拖拽平移
     panning: {
       enabled: true,
-      modifiers: ['alt', 'shift', 'space'], // 修饰键：按下修饰键并点击鼠标触发
+      modifiers: ['alt', 'shift'], // 修饰键：按下修饰键并点击鼠标触发
       eventTypes: 'leftMouseDown' // 触发画布平移的交互方式
     },
     // 开启画布缩放
@@ -195,12 +203,6 @@ export const initX6 = (_this) => {
   })
   _this.initEvent()
   trigger(graph)
-
-  if (_this.$route.query.id) {
-    const graphJSON = JSON.parse(localStorage.getItem('graphJSON2'))
-    _this.graph.fromJSON(graphJSON || jsonData2)
-  } else {
-    const graphJSON = JSON.parse(localStorage.getItem('graphJSON'))
-    _this.graph.fromJSON(graphJSON || jsonData)
-  }
+  const graphJSON = JSON.parse(localStorage.getItem('graphJSON'))
+  _this.graph.fromJSON(graphJSON || jsonData)
 }

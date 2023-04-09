@@ -38,11 +38,6 @@ export default {
       active: '0'
     }
   },
-  watch: {
-    nodeAttrs(data) {
-      console.log('nodeAttrs', data)
-    }
-  },
   methods: {
     handleClick({ index }) {
       console.log(index)

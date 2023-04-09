@@ -1,14 +1,3 @@
-<template>
-  <ul class="po-menu">
-    <li class="po-menu-item">
-      <div :class="['po-menu-item-box', {'disabled': disabled}]" @click="handleClick">
-        <svg-icon icon-class="cooperation" class="po-menu-icon" />
-        <span class="text">格式刷</span>
-      </div>
-    </li>
-  </ul>
-</template>
-
 <script lang="jsx">
 export default {
   name: 'FormatBrush',
@@ -43,20 +32,19 @@ export default {
       this.$emit('update:editMenuVisible', false)
       this.activeFormatBrush()
     }
+  },
+  render() {
+    return (
+      <ul class="po-menu">
+        <li class="po-menu-item">
+          <div class={['po-menu-item-box']} onClick={() => this.handleClick()}>
+            <svg-icon icon-class="cooperation" class="po-menu-icon" />
+            <span class="text">格式刷</span>
+          </div>
+        </li>
+      </ul>
+    )
   }
-  // render() {
-  //   return (
-  //     <ul class="po-menu">
-  //       <li class="po-menu-item">
-  //         <div class="po-menu-item-box">
-  //           <svg-icon icon-class="file_download" class="po-menu-icon" />
-  //           <span class="text">格式刷</span>
-  //           <div class="po-menu-hotkey" >ctrl/command + shift + C</div>
-  //         </div>
-  //       </li>
-  //     </ul>
-  //   )
-  // }
 }
 </script>
 

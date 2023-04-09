@@ -1,38 +1,3 @@
-<template>
-  <el-popover
-    v-model="exportVisible"
-    popper-class="exportChart"
-    placement="bottom"
-    width="200"
-    trigger="click">
-    <ul class="po-menu">
-      <li class="po-menu-item" @click="subMenuVisible = !subMenuVisible">
-        <div class="po-menu-item-box">
-          <svg-icon icon-class="file_download" class="po-menu-icon" />
-          <span class="text">导出为</span> 
-          <svg-icon icon-class="arrow_right" class="po-menu-right-icon" />
-        </div>
-      </li>
-      <li v-if="subMenuVisible" class="po-menu-sub-item">
-        <div
-          v-for="chartType in Object.keys(exportChartType)"
-          :key="chartType"
-          class="po-menu-sub-item-box"
-          @click="hanleExport(chartType)">
-          <i class="el-icon-picture-outline po-menu-icon"></i>
-          <span class="text">{{ chartType }}</span> 
-        </div>
-      </li>
-    </ul>
-    <span slot="reference">
-      文件
-    </span>
-    <!-- <template #reference>
-      文件
-    </template> -->
-  </el-popover>
-</template>
-
 <script lang="jsx">
 import { exportChartType, exportChart } from './index'
 export default {
@@ -50,49 +15,47 @@ export default {
       this.subMenuVisible = false
       exportChart(window.graph, type)
       this.$message.success('图片导出成功')
+    },
+    handleClick() {
+      this.subMenuVisible = !this.subMenuVisible
     }
+  },
+  render() {
+    return (
+      <el-popover
+        v-model={this.exportVisible}
+        placement="bottom"
+        width="200"
+        trigger="hover">
+        <ul class="po-menu">
+          <li class="po-menu-item" onClick={() => this.handleClick()}>
+            <div class="po-menu-item-box">
+              <svg-icon icon-class="file_download" class="po-menu-icon" />
+              <span class="text">导出为</span> 
+              <svg-icon icon-class="arrow_right" class="po-menu-right-icon" />
+            </div>
+          </li>
+          {
+            this.subMenuVisible && <li class="po-menu-sub-item">
+              {
+                Object.keys(exportChartType).map(type => {
+                  return (
+                    <div class="po-menu-sub-item-box" onClick={() => this.hanleExport(type)}>
+                      <i class="el-icon-picture-outline po-menu-icon"></i>
+                      <span class="text">{type}</span> 
+                    </div>
+                  )
+                })
+              }
+            </li>
+          }
+        </ul>
+        <span slot="reference">
+              文件
+        </span>
+      </el-popover>
+    )
   }
-  // render() {
-  // return (
-  //   <div>
-  //     {
-  //       this.exportVisible && <el-popover
-  //         placement="bottom"
-  //         width="200"
-  //         ref="reference"
-  //         trigger="click">
-  //         <ul class="po-menu">
-  //           <li class="po-menu-item" onClick={this.subMenuVisible = !this.subMenuVisible}>
-  //             <div class="po-menu-item-box">
-  //               <svg-icon icon-class="file_download" class="po-menu-icon" />
-  //               <span class="text">导出为</span> 
-  //               <svg-icon icon-class="arrow_right" class="po-menu-right-icon" />
-  //             </div>
-  //           </li>
-  //           {
-  //             this.subMenuVisible && <li class="po-menu-sub-item">
-  //               {
-  //                 Object.keys(exportChartType).map(type => {
-  //                   return (
-  //                     <div class="po-menu-sub-item-box" onClick={() => this.hanleExport(type)}>
-  //                       <i class="el-icon-picture-outline po-menu-icon"></i>
-  //                       <span class="text">{type}</span> 
-  //                     </div>
-  //                   )
-  //                 })
-  //               }
-  //             </li>
-  //           }
-  //         </ul>
-  //         <span slot="reference">
-  //           文件
-  //         </span>
-            
-  //       </el-popover>
-  //     }
-  //   </div>
-  // )
-  // }
 }
 </script>
 <style lang="scss" scoped>

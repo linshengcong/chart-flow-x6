@@ -1,3 +1,9 @@
+<!--
+ * @Author: lixiaoyi 2212884878@qq.com
+ * @Date: 2023-03-28 16:35:32
+ * @LastEditors: lixiaoyi 2212884878@qq.com
+ * @LastEditTime: 2023-03-29 16:01:03
+-->
 <script lang="jsx">
 import ColorPicker from '@components/color-picker'
 export default {
@@ -180,12 +186,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .graph-container{
-  width: 100%;
+  width: 210px;
   height: 100%;
-  // position: fixed;
-  // right:0;
-  // top: 0;
-  // z-index: 999;
   background: #fff;
   padding: 20px;
   .devider{

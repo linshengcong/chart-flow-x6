@@ -100,6 +100,7 @@ export default {
 <style lang="scss" scoped>
 .property-panel {
   background-color: #f6f7f8;
+  width: 250px;
   height: 100%;
 
   .item {

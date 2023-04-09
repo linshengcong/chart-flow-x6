@@ -1,3 +1,9 @@
+<!--
+ * @Author: lixiaoyi 2212884878@qq.com
+ * @Date: 2023-03-28 16:35:32
+ * @LastEditors: lixiaoyi 2212884878@qq.com
+ * @LastEditTime: 2023-03-29 16:01:03
+-->
 <script lang="jsx">
 import ColorPicker from '@/components/color-picker'
 export default {

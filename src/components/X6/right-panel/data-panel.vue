@@ -14,15 +14,6 @@
           placeholder="请选择日期"
           @change="handleInput" />
       </div>
-      <div class="user-info">
-        <svg-icon class="svg" icon-class="access" />
-        <div class="name">
-          {{ nodeInfo.name || '江泽旭' }}
-        </div>
-        <div class="name">
-          {{ nodeInfo.job ? `(${nodeInfo.job})` : '(产品经理)' }}
-        </div>
-      </div>
     </div>
 
     <div class="base-info">

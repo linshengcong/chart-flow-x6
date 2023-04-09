@@ -32,7 +32,7 @@
           <!-- <tool-bar v-if="isReady" /> -->
         </div>
         <!--流程图画板-->
-        <div id="container" :class="{'format-brush': isFormatBrush}"></div>
+        <div id="container" :class="['x6-graph x6-graph-pannable', {'format-brush': isFormatBrush}]"></div>
         <!-- 迷你地图 -->
         <div id="minimap" class="mini-map"></div>
       </div>
@@ -64,6 +64,7 @@ import jsonData from './graph/data'
 import RightPanel from './right-panel/index'
 import MenuBar from './components/menuBar.vue'
 import insertCss from 'insert-css'
+import { setWidgetToolsHidden } from './tool-bar/trigger'
 // import Modal from './Modal'
 insertCss(`
   @keyframes ant-line {
@@ -89,6 +90,7 @@ export default {
   },
   data() {
     return {
+      formatBrushConnectorType: '',
       disabled: false,
       defaultStyle: {},
       isFormatBrush: false,
@@ -123,6 +125,7 @@ export default {
       if (event.code === 'Escape') {
         this.isFormatBrush = false
         this.currentCellFormatAttr = {}
+        this.formatBrushConnectorType = ''
       }
     })
     // 加载X6
@@ -138,12 +141,23 @@ export default {
     },
     // 设置默认样式
     handleSetDefaultStyle() {
+      Reflect.deleteProperty(this.nodeAttrs.attrs.text, 'text')
       Object.assign(this.defaultStyle, this.nodeAttrs.attrs)
     },
     // 格式刷
+    // TODO node 刷 edge 样式, edge 刷 node 样式 
     activeFormatBrush() {
       this.isFormatBrush = true
-      this.currentCellFormatAttr = this.nodeAttrs.attrs
+      const selected = this.graph.getSelectedCells()
+      if (!selected.length) return
+      if (this.formatBrushType === 'node') {
+        Reflect.deleteProperty(this.nodeAttrs.attrs.text, 'text')
+        this.currentCellFormatAttr = this.nodeAttrs.attrs
+        this.formatBrushConnectorType = ''
+      } else {
+        this.formatBrushConnectorType = selected[0].getConnector() ? selected[0].getConnector()['name'] : 'rounded'
+        this.currentCellFormatAttr = {}
+      }
     },
     contextMenuFn(type, node) {
       switch (type) {
@@ -162,7 +176,6 @@ export default {
     getResetGraph() {
       const graphJSON = this.graph.toJSON()
       this.graphData = JSON.parse(JSON.stringify(graphJSON)).cells
-      console.log(this.graphData)
     },
     handleSaveGraph() {
       const graphJSON = this.graph.toJSON()
@@ -180,8 +193,8 @@ export default {
       const type = target.getAttribute('data-type')
       const node = createNode(Number(type || 1), this)
       if (node) {
-        Object.assign(node.attrs.body, this.defaultStyle.body)
-        Object.assign(node.attrs.text, this.defaultStyle.text)
+        const { body, text } = node.attrs
+        node.setAttrs({ body: Object.assign(body, this.defaultStyle.body), rect: Object.assign(body, this.defaultStyle.body), text: Object.assign(text, this.defaultStyle.text) })
         this.dnd.start(node, e)
       } else {
         this.$message.error('添加失败')
@@ -194,8 +207,8 @@ export default {
       const type = target.getAttribute('data-type')
       const node = createNode(Number(type || 1), this)
       if (node) {
-        Object.assign(node.attrs.body, this.defaultStyle.body)
-        Object.assign(node.attrs.text, this.defaultStyle.text)
+        const { body, text } = node.attrs
+        node.setAttrs({ body: Object.assign(body, this.defaultStyle.body), rect: Object.assign(body, this.defaultStyle.body), text: Object.assign(text, this.defaultStyle.text) })
         this.graph.addCell([node, createEdge(this.activeNode, node, this)])
         this.$refs['nodeDnd'].doClose()
         this.activeNode = ''
@@ -215,8 +228,13 @@ export default {
       const that = this
       const container = document.getElementById('container')
       graph.on('node:click', ({ node }) => {
-        // console.log('点击事件:', node.store.data.attrs, node.attrs)
+        const disableMove = node.store.data.disableMove
+        if (disableMove) {
+          setWidgetToolsHidden(disableMove)
+          return false
+        }
         setAnimate(node.store.data.id, graph)
+        this.formatBrushType = 'node'
         this.nodeAttrs = {
           attrs: node.attrs,
           nodeInfo: Object.assign({
@@ -226,22 +244,28 @@ export default {
             knowledgeBase: [{ label: '' }]
           }, node.store.data.attrs.text)
         }
-        if (this.isFormatBrush) {
+        if (this.isFormatBrush && Object.keys(this.currentCellFormatAttr).length) {
           const { body, text } = node['attrs']
           node.setAttrs({ body: Object.assign(body, this.currentCellFormatAttr.body), rect: Object.assign(body, this.currentCellFormatAttr.body), text: Object.assign(text, this.currentCellFormatAttr.text) })
         }
       })
-      graph.on('cell:mousedown', () => {
-        const selected = graph.getSelectedCells()
-        console.log('cell mousedown', selected)
+
+      graph.on('edge:click', () => {
+        this.formatBrushType = 'edge'
+        if (this.isFormatBrush && this.formatBrushConnectorType) {
+          const selected = this.graph.getSelectedCells()
+          selected.forEach(el => {
+            el.setConnector && el.setConnector(this.formatBrushConnectorType)
+          })
+        }
       })
 
       graph.on('blank:click', () => {
         const selected = graph.getSelectedCells()
-        console.log('blank click', selected)
         if (!selected.length) {
           this.isFormatBrush = false
           this.currentCellFormatAttr = {}
+          this.formatBrushConnectorType = ''
         }
       })
       graph.on('node:dblclick', ({ node }) => {
@@ -257,21 +281,20 @@ export default {
           this.$refs.menuBar.initFn(e.offsetX, e.offsetY, { type: 'edge', item: edge })
         })
       })
-      graph.on('blank:click', () => {
-      })
+
       graph.on('node:contextmenu', ({ x, y, node }) => {
         this.showContextMenu = true
         this.$nextTick(() => {
-          const p = graph.localToPage(x, y)
-          console.log(x, y, node, p)
+          // const p = graph.localToPage(x, y)
           this.$refs.menuBar.initFn(x, y, { type: 'node', item: node })
         })
       })
       // 鼠标移入 显示连接桩
       const { FunctionExt } = window.X6
-      graph.on('node:mouseenter', FunctionExt.debounce(() => {
+      graph.on('node:mouseenter', FunctionExt.debounce(({ node }) => {
         const ports = container.querySelectorAll('.x6-port-body')
-        this.showPorts(ports, true)
+        const disableMove = node.store.data.disableMove
+        this.showPorts(ports, !disableMove)
       }), 500)
       // 鼠标移出 隐藏连接桩
       graph.on('node:mouseleave', () => {
@@ -295,6 +318,10 @@ export default {
 
       // 节点鼠标进入
       graph.on('node:mousedown', ({ node }) => {
+        const disableMove = node.store.data.disableMove
+        if (disableMove) {
+          return false
+        }
         addTools(node, that)
       })
 
@@ -306,11 +333,9 @@ export default {
         this.activeNodeAbs = 'right'
         removeShapeEdge(that.graph)
         this.disabled = !graph.getSelectedCells().length
-        console.log('disabled', this.disabled)
       })
       graph.on('node:selected', () => {
         this.disabled = !graph.getSelectedCells().length
-        console.log('disabled', this.disabled)
       })
     }
   }
@@ -319,6 +344,6 @@ export default {
 <style lang="scss" src="./index.scss"></style>
 <style lang="scss" scoped>
 .format-brush {
-  cursor: url('https://res.cloudinary.com/dvkugaw3b/image/upload/v1641562028/cursor_ad12rf.png'), auto !important;
+  cursor: url('https://linshengcong-cra.oss-cn-shenzhen.aliyuncs.com/format-brush.ico'), auto !important;
 }
 </style>

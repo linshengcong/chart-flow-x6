@@ -4,7 +4,7 @@
     popper-class="view"
     placement="bottom"
     width="200"
-    trigger="click">
+    trigger="hover">
     <ul class="po-menu">
       <li class="po-menu-item" @click="zoom(0.1,false)">
         <div class="po-menu-item-box">
@@ -39,7 +39,7 @@
     </ul>
     <span slot="reference">
       视图
-    </span>
+    </span> 
   </el-popover>
 </template>
 <script>
@@ -72,7 +72,7 @@ export default {
      * @param {Number} number 放大/缩小的因子
      * @param {Boolean} absolute 为 true 时，表示将画布缩放到 factor 代表的值,否则 factor 表示放大/缩小的因子
      * @return {void}
-     */    
+     */
     zoom(number, absolute = true) {
       const graph = window.graph
       zoom(number, absolute, graph)

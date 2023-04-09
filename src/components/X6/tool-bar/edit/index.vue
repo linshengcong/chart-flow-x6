@@ -1,27 +1,9 @@
-<template>
-  <div>
-    <el-popover
-      ref="popover"
-      v-model="editMenuVisible"
-      placement="bottom"
-      width="200"
-      trigger="click">
-      <FormatBrush :edit-menu-visible.sync="editMenuVisible" />
-      <DefaultStyle :edit-menu-visible.sync="editMenuVisible" />
-    </el-popover>
-    <div v-popover:popover>
-      编辑
-    </div>
-  </div>
-</template>
-
 <script lang="jsx">
 import FormatBrush from './format-brush/index.vue'
 import DefaultStyle from './defaultStyle/index.vue'
 
-
 export default {
-  name: 'Edit',
+  name: 'EditBar',
   components: {
     FormatBrush,
     DefaultStyle
@@ -30,24 +12,20 @@ export default {
     return {
       editMenuVisible: false
     }
+  },
+  render() {
+    return (
+      <el-popover
+        v-model={this.editMenuVisible}
+        placement="bottom"
+        width="200"
+        trigger="hover"
+      >
+        <FormatBrush on={{ 'update:editMenuVisible': boolean => this.editMenuVisible = boolean }} editMenuVisible={this.editMenuVisible} />
+        <DefaultStyle on={{ 'update:editMenuVisible': boolean => this.editMenuVisible = boolean }} editMenuVisible={this.editMenuVisible} />
+        <span slot="reference">编辑</span>
+      </el-popover>
+    )
   }
-  // render() {
-  //   return (
-  //     <div>
-  //       <el-popover
-  //         ref="popover"
-  //         placement="bottom"
-  //         width="200"
-  //         trigger="click"
-  //       >
-  //         <FormatBrush editMenuVisible={this.editMenuVisible} />
-  //         <DefaultStyle editMenuVisible={this.editMenuVisible} />
-  //       </el-popover>
-  //       <div v-popover:popover>
-  //         编辑
-  //       </div>
-  //     </div>
-  //   )
-  // }
 }
 </script>

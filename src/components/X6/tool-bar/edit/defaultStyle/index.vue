@@ -1,16 +1,3 @@
-<template>
-  <ul class="po-menu">
-    <li class="po-menu-item">
-      <div :class="['po-menu-item-box', {'disabled': disabled}]">
-        <svg-icon icon-class="cooperation" class="po-menu-icon" @click="setDefaultStyle" />
-        <span class="text" @click="setDefaultStyle">默认样式</span>
-        <div class="po-menu-hotkey" @click="resetStyle">
-          清除样式
-        </div>
-      </div>
-    </li>
-  </ul>
-</template>
 <script lang="jsx">
 export default {
   name: 'DefaultStyle',
@@ -25,11 +12,6 @@ export default {
     return {
       disabled: false,
       subMenuVisible: false
-    }
-  },
-  watch: {
-    'editMenuVisible'() {
-      this.disabled = false
     }
   },
   methods: {
@@ -57,20 +39,22 @@ export default {
       this.handleResetStyle()
       this.$message.success('默认样式已清除成功')
     }
+  },
+  render() {
+    return (
+      <ul class="po-menu">
+        <li class="po-menu-item">
+          <div class={['po-menu-item-box']}>
+            <svg-icon icon-class="cooperation" class="po-menu-icon" onClick={() => this.setDefaultStyle()} />
+            <span class="text" onClick={() => this.setDefaultStyle()}>默认样式</span>
+            <div class="po-menu-hotkey" onClick={() => this.resetStyle()}>
+          清除样式
+            </div>
+          </div>
+        </li>
+      </ul>
+    )
   }
-  // render() {
-  //   return (
-  //     <ul class="po-menu">
-  //       <li class="po-menu-item" onClick={this.subMenuVisible = !this.subMenuVisible}>
-  //         <div class="po-menu-item-box">
-  //           <svg-icon icon-class="file_download" class="po-menu-icon" />
-  //           <span class="text">默认样式</span>
-  //           <div class="po-menu-hotkey" >清除样式</div>
-  //         </div>
-  //       </li>
-  //     </ul>
-  //   )
-  // }
 }
 </script>
 
